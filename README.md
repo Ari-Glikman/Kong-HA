@@ -1,4 +1,4 @@
-# Kong High Availability Deployments via InterSystems API Manager
+# IAM High Availability Deployments
 
 The purpose of this repo is to provide some concrete docker-compose.yml examples to help you experiment with different Kong deployment topologies. 
 **This is not meant to teach you how Kong/IAM works, rather to help you understand how to deploy a Highly Available IAM once you have basic understanding of IAM. To learn how IAM works complete the pre-requisites.**
