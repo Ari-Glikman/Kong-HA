@@ -1,0 +1,46 @@
+services:
+  iam1:
+    image: containers.intersystems.com/intersystems/iam:3.10
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ANONYMOUS_REPORTS: "off"
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+      ISC_IRIS_URL: "IAM:${IRIS_PASSWORD}@host.docker.internal:80/api/iam/license"
+    volumes:
+      - ./kong.yml:/etc/kong/kong.yml
+    ports:
+      - target: 8000
+        published: 8000
+        protocol: tcp
+      - target: 8001
+        published: 8001
+        protocol: tcp
+    restart: on-failure
+
+  iam2:
+    image: containers.intersystems.com/intersystems/iam:3.10
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ANONYMOUS_REPORTS: "off"
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+      ISC_IRIS_URL: "IAM:${IRIS_PASSWORD}@host.docker.internal:80/api/iam/license"
+    volumes:
+      - ./kong.yml:/etc/kong/kong.yml
+    ports:
+      - target: 8000
+        published: 8010
+        protocol: tcp
+      - target: 8001
+        published: 8011
+        protocol: tcp
+    restart: on-failure
