@@ -1,0 +1,13 @@
+_format_version: "3.0"
+
+services:
+  - name: test-api
+    protocol: http
+    host: host.docker.internal     # If Kong runs *on your host*.
+    port: 80
+    path: /api/atelier
+    routes:
+      - name: test-api
+        paths:
+          - /somepath
+        strip_path: true   # /somepath is removed before proxying
