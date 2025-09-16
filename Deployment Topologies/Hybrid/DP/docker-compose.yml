@@ -1,0 +1,88 @@
+# Hybrid mode example: Data plane.
+services:
+  iam-data1:
+    image: containers.intersystems.com/intersystems/iam:3.10
+    environment:
+      KONG_LOG_LEVEL: debug
+      KONG_DATABASE: 'off'
+      KONG_PROXY_LISTEN:      '0.0.0.0:8000'
+      KONG_ADMIN_LISTEN:      'off'
+      KONG_ADMIN_GUI_LISTEN:  'off'
+      KONG_PORTAL_GUI_LISTEN: 'off'
+      KONG_PORTAL_API_LISTEN: 'off'
+      KONG_ANONYMOUS_REPORTS: 'off'
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_PORTAL: 'off'
+      ISC_IRIS_URL: IAM:${IRIS_PASSWORD}@host.docker.internal:80/api/iam/license
+      KONG_ROLE: data_plane
+      KONG_CLUSTER_MTLS: 'shared'
+      KONG_CLUSTER_CERT: /etc/kong/admin.crt
+      KONG_CLUSTER_CERT_KEY: /etc/kong/admin.key
+      KONG_LUA_SSL_TRUSTED_CERTIFICATE: /etc/kong/admin.crt
+      KONG_CLUSTER_CONTROL_PLANE: kong_clustering:8105
+      KONG_CLUSTER_TELEMETRY_ENDPOINT: kong_clustering:8006
+      KONG_CLUSTER_SERVER_NAME: "kong.clustering"
+      KONG_CLUSTER_TELEMETRY_SERVER_NAME: "kong.clustering"
+      KONG_STATUS_LISTEN: 0.0.0.0:8100
+    # This IP needs to be changed to point at the docker host.
+    extra_hosts:
+        - "kong_clustering:host-gateway"
+    ports:
+      - target: 8000
+        published: 8000
+        protocol: tcp
+      - target: 8100
+        published: 8101
+        protocol: tcp
+    restart: on-failure
+
+
+    # This directory should be changed to point at your cert files on the host OS.
+    volumes:
+    - ./Certificates/admin.crt:/etc/kong/admin.crt
+    - ./Certificates/admin.key:/etc/kong/admin.key
+
+
+  iam-data2:
+    image: containers.intersystems.com/intersystems/iam:3.10
+    environment:
+      KONG_LOG_LEVEL: debug
+      KONG_DATABASE: 'off'
+      KONG_PROXY_LISTEN:      '0.0.0.0:8000'
+      KONG_ADMIN_LISTEN:      'off'
+      KONG_ADMIN_GUI_LISTEN:  'off'
+      KONG_PORTAL_GUI_LISTEN: 'off'
+      KONG_PORTAL_API_LISTEN: 'off'
+      KONG_ANONYMOUS_REPORTS: 'off'
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_PORTAL: 'off'
+      ISC_IRIS_URL: IAM:${IRIS_PASSWORD}@host.docker.internal:80/api/iam/license
+      KONG_ROLE: data_plane
+      KONG_CLUSTER_MTLS: 'shared'
+      KONG_CLUSTER_CERT: /etc/kong/admin.crt
+      KONG_CLUSTER_CERT_KEY: /etc/kong/admin.key
+      KONG_LUA_SSL_TRUSTED_CERTIFICATE: /etc/kong/admin.crt
+      KONG_CLUSTER_CONTROL_PLANE: kong_clustering:8105
+      KONG_CLUSTER_TELEMETRY_ENDPOINT: kong_clustering:8006
+      KONG_CLUSTER_SERVER_NAME: "kong.clustering"
+      KONG_CLUSTER_TELEMETRY_SERVER_NAME: "kong.clustering"
+      KONG_STATUS_LISTEN: 0.0.0.0:8100
+    # This IP needs to be changed to point at the docker host.
+    extra_hosts:
+        - "kong_clustering:host-gateway"
+    ports:
+      - target: 8000
+        published: 8100
+        protocol: tcp
+      - target: 8100
+        published: 8102
+        protocol: tcp
+    restart: on-failure
+
+
+    # This directory should be changed to point at your cert files on the host OS.
+    volumes:
+    - ./Certificates/admin.crt:/etc/kong/admin.crt
+    - ./Certificates/admin.key:/etc/kong/admin.key
