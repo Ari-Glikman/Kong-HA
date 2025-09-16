@@ -51,7 +51,7 @@ Make sure to set your environment variable IRIS_PASSWORD and review the YAML to 
 
 Note that for the first time we have introduced a certificate and key. For the sake of simplicity I will try to avoid them in these examples and write about how to properly set up secure communication in an upcoming InterSystems Developer Community article. That being said, Hybrid Mode requires that the CP and DP communicate via mTLS hence it will be necessary here.
 
-Create a /Certificates in the CP directory that will be referenced in the volumes section of the YAML and in this directory run the following (assuming you are on powershell with OpenSSL 1.1.1+) to create the certificate and key:
+Create a /Certificates folder in the CP directory that will be referenced in the volumes section of the YAML and in this directory run the following (assuming you are on powershell with OpenSSL 1.1.1+) to create the certificate and key:
 ```
 openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes -sha256 -days 825 `
   -keyout admin.key -out admin.crt `
