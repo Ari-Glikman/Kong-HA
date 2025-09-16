@@ -24,7 +24,7 @@ IAM (essentially Kong Gateway) has 3 [deployment topologies](https://developer.k
 | Deployment flexibility: Users can deploy groups of Data Planes in different data centers, geographies, or zones without needing a local clustered database for each DP group. | When running in traditional mode, every Kong Gateway node runs as both a Control Plane (CP) and Data Plane (DP). This means that if any of your nodes are compromised, the entire running gateway configuration is compromised.|
 |  | If you’re running Kong Gateway Enterprise with Kong Manager, request throughput may be reduced on nodes running Kong Manager due to expensive calculations being run to render analytics data and graphs. |
 
-To run this, in the Traditional folder:
+To run this, in the [Traditional](https://github.com/Ari-Glikman/Kong-HA/tree/main/Deployment%20Topologies/Traditional) folder:
 Make sure to set your environment variable IRIS_PASSWORD and review the YAML to make sure it points at your correct ports and hosts to get the IAM license.
 ```
 docker compose up -d
@@ -48,11 +48,23 @@ Create some services and routes and test it out at exposed ports 8000 and 8010.
 
 To run this, in the Hybrid folder:
 Make sure to set your environment variable IRIS_PASSWORD and review the YAML to make sure it points at your correct ports and hosts to get the IAM license.
-First from the CP subfolder and then from the DP subfolder:
+
+Note that for the first time we have introduced a certificate and key. For the sake of simplicity I will try to avoid them in these examples and write about how to properly set up secure communication in an upcoming InterSystems Developer Community article. That being said, Hybrid Mode requires that the CP and DP communicate via mTLS hence it will be necessary here.
+
+Create a /Certificates in the CP directory that will be referenced in the volumes section of the YAML and in this directory run the following (assuming you are on powershell with OpenSSL 1.1.1+) to create the certificate and key:
+```
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes -sha256 -days 825 `
+  -keyout admin.key -out admin.crt `
+  -subj "/CN=kong_clustering" `
+  -addext "subjectAltName=DNS:kong_clustering"
+```
+Make sure to copy and paste the certificates directory to also appear in the DP directory.
+
+Once that is done you can go ahead and first for the CP and then for the DP:
 ```
 docker compose up -d
 ```
-You can now go and create some services and routes and test it out at exposed ports 8000 and 8100.
+You can now go and create some services and routes at the Kong Manager on http://localhost:8002 and test API requests out at exposed ports 8000 and 8100.
 
 3) [DB-less Mode](https://developer.konghq.com/gateway/db-less-mode/)
 
