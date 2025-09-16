@@ -16,16 +16,27 @@ IAM (essentially Kong Gateway) has 3 [deployment topologies](https://developer.k
 
 1) [Kong Traditional Mode](https://developer.konghq.com/gateway/traditional-mode/): [Multiple Node Clusters](https://developer.konghq.com/gateway/traditional-mode/#multiple-node-clusters)
 
-<img width="1099" height="401" alt="image" src="https://github.com/user-attachments/assets/155ac60e-8d6a-4505-b2d7-ca3aa077c3b2" />
+<img width="1105" height="400" alt="image" src="https://github.com/user-attachments/assets/221a30a2-ce12-41e0-8829-6501ba8f70fd" />
+
 
 | Pros | Cons |
 |---|---|
 | Deployment flexibility: Users can deploy groups of Data Planes in different data centers, geographies, or zones without needing a local clustered database for each DP group. | When running in traditional mode, every Kong Gateway node runs as both a Control Plane (CP) and Data Plane (DP). This means that if any of your nodes are compromised, the entire running gateway configuration is compromised.|
 |  | If you’re running Kong Gateway Enterprise with Kong Manager, request throughput may be reduced on nodes running Kong Manager due to expensive calculations being run to render analytics data and graphs. |
 
+To run this, in the Traditional folder:
+Make sure to set your environment variable IRIS_PASSWORD and review the YAML to make sure it points at your correct ports and hosts to get the IAM license.
+```
+docker compose up -d
+```
+
+Access the Kong Managers at http://localhost:8002 and http://localhost:8012.
+Note that configurations set on one Manager are synced to the other as they share the same database.
+Create some services and routes and test it out at exposed ports 8000 and 8010.
+
 2) [Hybrid Mode](https://developer.konghq.com/gateway/hybrid-mode/)
 
-<img width="954" height="1126" alt="image" src="https://github.com/user-attachments/assets/1545c401-6350-4ffb-b638-d68fcdd5e54b" />
+<img width="978" height="1118" alt="image" src="https://github.com/user-attachments/assets/2e173b53-82d1-45f8-818a-afe4fa057e20" />
 
 | Pros | Cons |
 |---|---|
@@ -35,9 +46,17 @@ IAM (essentially Kong Gateway) has 3 [deployment topologies](https://developer.k
 | Increased security: If one of the DP nodes is compromised, an attacker won’t be able to affect other nodes in the Kong Gateway cluster. ||
 | Ease of management: Admins only need to interact with the CP nodes to control and monitor the status of the entire Kong Gateway cluster. ||
 
+To run this, in the Hybrid folder:
+Make sure to set your environment variable IRIS_PASSWORD and review the YAML to make sure it points at your correct ports and hosts to get the IAM license.
+First from the CP subfolder and then from the DP subfolder:
+```
+docker compose up -d
+```
+You can now go and create some services and routes and test it out at exposed ports 8000 and 8100.
+
 3) [DB-less Mode](https://developer.konghq.com/gateway/db-less-mode/)
 
-<img width="1084" height="303" alt="image" src="https://github.com/user-attachments/assets/6a6400b6-2eed-4de1-8681-f219c948ad59" />
+<img width="1100" height="303" alt="image" src="https://github.com/user-attachments/assets/8e333062-a1c1-4a70-b461-dc6257cdec9f" />
 
 
 | Pros | Cons |
@@ -45,3 +64,15 @@ IAM (essentially Kong Gateway) has 3 [deployment topologies](https://developer.k
 | Reduced number of dependencies: No need to manage a database installation if the entire setup for your use-cases fits in memory. | No plugins that require a database, like rate limiting with the cluster strategy, or OAuth2. |
 | Automation in CI/CD scenarios: Configuration for entities can be kept in a single source of truth managed via a Git repository. | |
 | Enables more deployment options for Kong Gateway. ||
+
+To run this, in the DB-less folder:
+Make sure to set your environment variable IRIS_PASSWORD and review the YAML to make sure it points at your correct ports and hosts to get the IAM license.
+```
+docker compose up -d
+```
+Test from a REST Client such as Postman sending:
+
+GET http://localhost:8000/somepath/ or
+GET http://localhost:8010/somepath/
+
+with the proper Authorization IRIS/HSHC expects.
