@@ -18,14 +18,11 @@ IAM (essentially Kong Gateway) has 3 [deployment topologies](https://developer.k
 
 <img width="1105" height="400" alt="image" src="https://github.com/user-attachments/assets/221a30a2-ce12-41e0-8829-6501ba8f70fd" />
 
+
 | Pros | Cons |
 |---|---|
-| Traditional mode is the only deployment topology that supports plugins that require a database, like rate limiting with the cluster strategy, or OAuth2. | No plugins that require a database, like rate limiting with the cluster strategy, or OAuth2. |
-| Increased reliability: The availability of the database doesn’t affect the availability of the Data Planes. Each DP caches the latest configuration it received from the Control Plane on local disk storage, so if CP nodes are down, the DP nodes keep functioning. While the CP is down, DP nodes constantly try to reestablish communication. DP nodes can be restarted while the CP is down, and still proxy traffic normally. | |
-| Traffic reduction: Drastically reduces the amount of traffic to and from the database, since only CP nodes need a direct connection to the database. ||
-| Increased security: If one of the DP nodes is compromised, an attacker won’t be able to affect other nodes in the Kong Gateway cluster. ||
-| Ease of management: Admins only need to interact with the CP nodes to control and monitor the status of the entire Kong Gateway cluster. ||
-
+| Traditional mode is the only deployment topology that supports plugins that require a database, like rate limiting with the cluster strategy, or OAuth2. | When running in traditional mode, every Kong Gateway node runs as both a Control Plane (CP) and Data Plane (DP). This means that if any of your nodes are compromised, the entire running gateway configuration is compromised.|
+|  | If you’re running Kong Gateway Enterprise with Kong Manager, request throughput may be reduced on nodes running Kong Manager due to expensive calculations being run to render analytics data and graphs. |
 
 To run this, in the [Traditional](https://github.com/Ari-Glikman/Kong-HA/tree/main/Deployment%20Topologies/Traditional) folder:
 Make sure to set your environment variable IRIS_PASSWORD and review the YAML to make sure it points at your correct ports and hosts to get the IAM license.
@@ -43,9 +40,11 @@ Create some services and routes and test it out at exposed ports 8000 and 8010.
 
 | Pros | Cons |
 |---|---|
-| Deployment flexibility: Users can deploy groups of Data Planes in different data centers, geographies, or zones without needing a local clustered database for each DP group. | When running in traditional mode, every Kong Gateway node runs as both a Control Plane (CP) and Data Plane (DP). This means that if any of your nodes are compromised, the entire running gateway configuration is compromised.|
-|  | If you’re running Kong Gateway Enterprise with Kong Manager, request throughput may be reduced on nodes running Kong Manager due to expensive calculations being run to render analytics data and graphs. |
-
+| Deployment flexibility: Users can deploy groups of Data Planes in different data centers, geographies, or zones without needing a local clustered database for each DP group. | No plugins that require a database, like rate limiting with the cluster strategy, or OAuth2. |
+| Increased reliability: The availability of the database doesn’t affect the availability of the Data Planes. Each DP caches the latest configuration it received from the Control Plane on local disk storage, so if CP nodes are down, the DP nodes keep functioning. While the CP is down, DP nodes constantly try to reestablish communication. DP nodes can be restarted while the CP is down, and still proxy traffic normally. | |
+| Traffic reduction: Drastically reduces the amount of traffic to and from the database, since only CP nodes need a direct connection to the database. ||
+| Increased security: If one of the DP nodes is compromised, an attacker won’t be able to affect other nodes in the Kong Gateway cluster. ||
+| Ease of management: Admins only need to interact with the CP nodes to control and monitor the status of the entire Kong Gateway cluster. ||
 
 To run this, in the Hybrid folder:
 Make sure to set your environment variable IRIS_PASSWORD and review the YAML to make sure it points at your correct ports and hosts to get the IAM license.
